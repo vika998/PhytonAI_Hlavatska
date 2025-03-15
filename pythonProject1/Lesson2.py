@@ -10,7 +10,7 @@ class Student:
      #   self.scholarship += 100
 
     def __str__(self):
-        return f"I am a Student. My name is {self.name} and my height is {self.name}"
+        return f"I am a Student. My name is {self.name} and my height is {self.height}"
 
     def add_scholarship(self):
         self.scholarship += 100
