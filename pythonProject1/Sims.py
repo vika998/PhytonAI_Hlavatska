@@ -1,14 +1,24 @@
 import random
 
 class Human:
-    def __init__(self, name = "Human", job = None, home = None, car = None):
+    def __init__(self, name = "Human", job = None, home = None, car = None, hobby = None):
         self.name = name
         self.job = job
         self.home = home
         self.car = car
         self.money = 100
-        self.glaness = 50
+        self.gladness = 50
         self.satiety = 50
+        self.hobby = hobby
+
+    def do_hobby(self):
+        if self.money >= self.hobby.cost:
+            self.money -= self.hobby.cost
+            self.gladness += self.hobby.gladness_boost
+            print(f"{self.name} is enjoying {self.hobby.hobby}."
+                  f"Gladness increased by {self.hobby.gladness_boost}.")
+        else:
+            print("Not enough money for hobby.")
 
     def get_home(self):
         self.home = House()
@@ -21,11 +31,12 @@ class Human:
             pass
         else:
             self.to_repair()
-            self.job = Job(job_list)
+            return
+        self.job = Job(job_list)
 
     def eat(self):
         if self.home.food <= 0:
-            self.shopping("food")
+            self.shopping('food')
         else:
             if self.satiety >= 100:
                 self.satiety = 100
@@ -37,14 +48,16 @@ class Human:
         if self.car.drive():
             pass
         else:
-            if self.car.flue <20:
+            if self.car.flue < 20:
                 self.shopping('flue')
                 return
+            else:
+                self.to_repair()
             self.money += self.job.salary
-            self.glaness += self.job.gladness_lass
+            self.gladness += self.job.gladness_less
             self.satiety -= 4
 
-    def shopping(self):
+    def shopping(self, manage):
         if self.car.drive():
             pass
         else:
@@ -63,16 +76,16 @@ class Human:
             self.home.food += 50
         elif manage == 'delicacies':
             print("Hooray! Delicious!")
-            self.glaness += 10
+            self.gladness += 10
             self.satiety += 2
             self.money -= 15
 
     def chill(self):
-        self.glaness += 10
+        self.gladness += 10
         self.home.mess += 5
 
     def clean_home(self):
-        self.glaness -= 5
+        self.gladness -= 5
         self.home.mess = 0
 
     def to_repair(self):
@@ -86,7 +99,7 @@ class Human:
         print(f"{human_indexes:^50}", "\n")
         print(f"Money – {self.money}")
         print(f"Satiety – {self.satiety}")
-        print(f"Gladness – {self.glaness}")
+        print(f"Gladness – {self.gladness}")
         home_indexes = "Home indexes"
         print(f"{home_indexes:^50}", "\n")
         print(f"Food – {self.home.food}")
@@ -97,13 +110,13 @@ class Human:
         print(f"Strength – {self.car.strength}")
 
     def is_alive(self):
-        if self.glaness < 0:
+        if self.gladness < 0:
             print("Depression…")
             return False
         if self.satiety < 0:
             print("Dead…")
             return False
-        if self.money < -500:
+        if self.money <-500:
             print("Bankrupt…")
             return False
 
@@ -119,13 +132,13 @@ class Human:
             print(f"I bought a car   {self.car.brand}")
         if self.job is None:
             self.get_job()
-            print(f"I don't have a job,     going to get a job {self.job.job}     with salary {self.job.salary}")
+            print(f"I don't have a job,     going to get a job {self.job.job} with salary {self.job.salary}")
         self.days_indexes(day)
         dice = random.randint(1, 4)
         if self.satiety < 20:
             print("I'll go eat")
             self.eat()
-        elif self.glaness < 20:
+        elif self.gladness < 20:
             if self.home.mess > 15:
                 print("I want to chill, but there is so much mess…\n So I will clean the house")
                 self.clean_home()
@@ -150,6 +163,24 @@ class Human:
         elif dice == 4:
             print("Time for treats!")
             self.shopping(manage = "delicacies")
+        elif dice == 5:
+            print("Hobby time!")
+            self.do_hobby()
+
+
+
+class Hobby:
+    def __init__(self, hobby_list):
+        self.hobby = random.choice(list(hobby_list))
+        self.gladness_boost = hobby_list[self.hobby]['gladness_boost']
+        self.cost = hobby_list[self.hobby]['cost']
+
+hobby_list = {
+        "Reading" :{"gladness_boost":25, "cost":10},
+        "Gaming" :{"gladness_boost":40, "cost":30},
+        "Watching Movies" :{"gladness_boost":35, "cost":15},
+        }
+
 
 class Auto:
     def __init__(self, brand_list):
